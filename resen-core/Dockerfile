@@ -20,7 +20,8 @@ ENV MPLBACKEND Agg
 
 RUN mkdir -p $HOME/cache/omni && \
     mkdir -p $HOME/cache/ssies && \
-    mkdir -p $HOME/examples && \
+    #mkdir -p $HOME/examples && \
+    mkdir -p $HOME/tutorials && \
     mkdir -p $BUILD 
 
 WORKDIR /home/$NB_USER/build 
@@ -101,18 +102,36 @@ COPY resources/helpers/setup_pyglow.sh .
 RUN /bin/bash -cl 'bash setup_pyglow.sh && rm setup_pyglow.sh'
 
 # DataFetcher python package and example notebook
-COPY resources/FetchingDataFromManifest.ipynb /home/$NB_USER/examples
-COPY resources/test_manifest.json /home/$NB_USER/examples
+#COPY resources/FetchingDataFromManifest.ipynb /home/$NB_USER/examples
+#COPY resources/test_manifest.json /home/$NB_USER/examples
+RUN /bin/bash -cl 'mkdir -p /home/$NB_USER/tutorials/files/ScreenShots'
+COPY resources/tutorials/*.ipynb /home/$NB_USER/tutorials/
+COPY resources/tutorials/ScreenShots/* /home/$NB_USER/tutorials/files/ScreenShots/
+# The reason for files/ScreenShots is the way the jupyter notebook works from github.
+USER root
+RUN chown -R $NB_USER:$NB_GID /home/$NB_USER/tutorials
+USER $NB_USER
+
+COPY resources/helpers/fetch_copy_tutorials.sh .
+RUN /bin/bash -cl 'bash fetch_copy_tutorials.sh && rm fetch_copy_tutorials.sh'
+# convert to py27 and py36
+COPY resources/convert_ipynb_py27_py36.py .
+RUN /bin/bash -cl 'python convert_ipynb_py27_py36.py \
+              /home/$NB_USER/tutorials/*.ipynb \
+              /home/$NB_USER/tutorials/mango/*.ipynb \
+              && rm convert_ipynb_py27_py36.py'
+
+
+
 COPY resources/FetchData.tar.gz $PWD
 RUN /bin/bash -c 'tar -zxf FetchData.tar.gz && \
                   source /opt/conda/etc/profile.d/conda.sh && \
                   conda activate py27 && \
                   pip install ./FetchData --no-deps'
 
-
 # post installation stuff
 # cleanup
-WORKDIR /home/$NB_USER/work
+WORKDIR /home/$NB_USER
 RUN /bin/bash -c 'rm -r $BUILD && rm /home/$NB_USER/.wget-hsts'
 
 # password-less login on jupyterhub when running locally.
@@ -124,3 +143,4 @@ RUN /bin/bash -c 'source /opt/conda/etc/profile.d/conda.sh && \
 RUN /bin/bash -c 'echo "alias updatedb=\"/usr/bin/updatedb --require-visibility 0 -o ~/.locate.db\"" >>  ~/.bashrc && \
     echo "alias locate=\"/usr/bin/locate -d ~/.locate.db\"" >>  ~/.bashrc && \
     /usr/bin/updatedb --require-visibility 0 -o ~/.locate.db'
+

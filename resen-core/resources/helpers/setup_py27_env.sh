@@ -63,6 +63,11 @@ LDFLAGS="-shared" pip install -UI --no-binary :all: cartopy==0.17.0
 
 # Installing mangopy
 pip install git+https://github.com/astib/MANGO.git@b25cba78e58197394809cb8323656a1d636c3e3d
+#################################################################################
+# NOTE: If another commit is used as the source to install mangopy, change also #
+# the corresponding commit inside setup_py36_env.sh and fetch_copy_tutorials.sh #
+# helpers.                                                                      #
+#################################################################################
 
 # sciunt2 (no option for berkeleydb < 6 in conda-forge...)
 conda install --yes -n py27 -c anaconda db==5.3.28

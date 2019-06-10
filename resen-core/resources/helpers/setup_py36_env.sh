@@ -62,6 +62,11 @@ LDFLAGS="-shared" pip install -UI --no-binary :all: cartopy==0.17.0
 
 # Installing mangopy
 pip install git+https://github.com/astib/MANGO.git@b25cba78e58197394809cb8323656a1d636c3e3d
+#################################################################################
+# NOTE: If another commit is used as the source to install mangopy, change also #
+# the corresponding commit inside setup_py27_env.sh and fetch_copy_tutorials.sh #
+# helpers.                                                                      #
+#################################################################################
 
 # Remove pyqt and qt pulled in for matplotlib since we're only ever going to
 # use notebook-friendly backends in these images

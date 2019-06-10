@@ -21,6 +21,10 @@ git clone https://github.com/timduly4/pyglow.git
 cd pyglow
 #specific working commit from master that worked when creating this helper
 git checkout 83a055dae3aca540d0f862c7589a17fb14064e36 -b master_20190518_121258
+#################################################################################
+# NOTE: If another commit is used as the source to install pyglow, change also  #
+# the corresponding commit inside fetch_copy_tutorials.sh                       #
+#################################################################################
 
 conda activate py27
 pip install -r requirements.txt
